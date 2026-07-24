@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OFFICIAL SHOP ADMINISTRATION — ERP</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">OSA</div>
+      <div class="logo-text">Official Shop<br>Administration</div>
+    </div>
+    <nav id="nav-menu">
+      <a href="#dashboard" class="nav-link active" data-page="dashboard">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+      </a>
+      <a href="#products" class="nav-link" data-page="products">
+        <span class="nav-icon">📦</span><span class="nav-label">Produtos</span>
+      </a>
+      <a href="#stock" class="nav-link" data-page="stock">
+        <span class="nav-icon">🏭</span><span class="nav-label">Stock</span>
+      </a>
+      <a href="#sales" class="nav-link" data-page="sales">
+        <span class="nav-icon">🛒</span><span class="nav-label">Vendas</span>
+      </a>
+      <a href="#cashier" class="nav-link" data-page="cashier">
+        <span class="nav-icon">💰</span><span class="nav-label">Caixa</span>
+      </a>
+      <a href="#fuel" class="nav-link" data-page="fuel">
+        <span class="nav-icon">⛽</span><span class="nav-label">Combustível</span>
+      </a>
+      <a href="#inventory" class="nav-link" data-page="inventory">
+        <span class="nav-icon">📝</span><span class="nav-label">Inventário</span>
+      </a>
+      <a href="#audit" class="nav-link" data-page="audit">
+        <span class="nav-icon">🔍</span><span class="nav-label">Auditoria</span>
+      </a>
+      <a href="#users" class="nav-link" data-page="users">
+        <span class="nav-icon">👥</span><span class="nav-label">Utilizadores</span>
+      </a>
+      <a href="#settings" class="nav-link" data-page="settings">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Configurações</span>
+      </a>
+    </nav>
+    <div id="user-info">
+      <div id="user-name">—</div>
+      <div id="user-role">—</div>
+      <button id="btn-logout" class="btn-logout">Sair</button>
+    </div>
+  </aside>
+
+  <main id="main-content">
+    <header id="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div id="connection-status" class="status-online">Online</div>
+      <div id="currency-badge">MZN</div>
+    </header>
+
+    <section id="page-dashboard" class="page active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-value" id="kpi-total-sales">0 MZN</div>
+          <div class="kpi-label">Vendas Hoje</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-value" id="kpi-products">0</div>
+          <div class="kpi-label">Produtos</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🏭</div>
+          <div class="kpi-value" id="kpi-warehouse">0</div>
+          <div class="kpi-label">Stock Armazém</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🛍️</div>
+          <div class="kpi-value" id="kpi-store">0</div>
+          <div class="kpi-label">Stock Loja</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⛽</div>
+          <div class="kpi-value" id="kpi-fuel">0 L</div>
+          <div class="kpi-label">Combustível</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-value" id="kpi-profit">0 MZN</div>
+          <div class="kpi-label">Lucro Hoje</div>
+        </div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Últimas Vendas</h3>
+          <div id="recent-sales" class="table-container"></div>
+        </div>
+        <div class="card">
+          <h3>Movimentos Recentes</h3>
+          <div id="recent-movements" class="table-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-products" class="page">
+      <div class="toolbar">
+        <input type="text" id="product-search" placeholder="Pesquisar produto..." class="search-input">
+        <select id="product-category-filter" class="filter-select"><option value="">Todas Categorias</option></select>
+        <button id="btn-add-product" class="btn-primary">+ Novo Produto</button>
+      </div>
+      <div class="table-container">
+        <table id="products-table">
+          <thead>
+            <tr><th>ID</th><th>Nome</th><th>Categoria</th><th>Unidade</th><th>Preço Compra</th><th>Preço Venda</th><th>Localização</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="products-pagination" class="pagination"></div>
+    </section>
+
+    <section id="page-stock" class="page">
+      <div class="toolbar">
+        <input type="text" id="stock-search" placeholder="Pesquisar stock..." class="search-input">
+        <button id="btn-add-stock" class="btn-primary">+ Entrada de Stock</button>
+        <button id="btn-transfer-stock" class="btn-secondary">↔ Transferência</button>
+      </div>
+      <div class="table-container">
+        <table id="stock-table">
+          <thead>
+            <tr><th>Produto</th><th>Armazém</th><th>Loja</th><th>Total</th><th>Status</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="stock-pagination" class="pagination"></div>
+    </section>
+
+    <section id="page-sales" class="page">
+      <div class="toolbar">
+        <input type="date" id="sales-date-from" class="date-input">
+        <input type="date" id="sales-date-to" class="date-input">
+        <button id="btn-filter-sales" class="btn-secondary">Filtrar</button>
+        <button id="btn-new-sale" class="btn-primary">+ Nova Venda</button>
+      </div>
+      <div class="table-container">
+        <table id="sales-table">
+          <thead>
+            <tr><th>ID</th><th>Produto</th><th>Qtd</th><th>Total</th><th>Utilizador</th><th>Data</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="sales-pagination" class="pagination"></div>
+    </section>
+
+    <section id="page-cashier" class="page">
+      <div class="toolbar">
+        <button id="btn-open-register" class="btn-primary">Abrir Caixa</button>
+        <button id="btn-close-register" class="btn-danger">Fechar Caixa</button>
+        <button id="btn-register-report" class="btn-secondary">Relatório</button>
+      </div>
+      <div id="register-status" class="status-banner"></div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Caixa Atual</h3>
+          <div id="register-details"></div>
+        </div>
+        <div class="card">
+          <h3>Histórico de Caixa</h3>
+          <div id="register-history" class="table-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-fuel" class="page">
+      <div class="toolbar">
+        <button id="btn-add-fuel" class="btn-primary">+ Entrada Combustível</button>
+        <button id="btn-sell-fuel" class="btn-secondary">Vender Combustível</button>
+      </div>
+      <div class="table-container">
+        <table id="fuel-table">
+          <thead>
+            <tr><th>Tipo</th><th>Entrada</th><th>Saída</th><th>Saldo</th><th>Preço Compra</th><th>Preço Venda</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="page-inventory" class="page">
+      <div class="toolbar">
+        <button id="btn-new-inventory" class="btn-primary">+ Nova Sessão de Inventário</button>
+        <button id="btn-export-inventory" class="btn-secondary">📥 Exportar</button>
+      </div>
+      <div class="table-container">
+        <table id="inventory-table">
+          <thead>
+            <tr><th>ID</th><th>Data</th><th>Utilizador</th><th>Diferenças</th><th>Status</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="page-audit" class="page">
+      <div class="toolbar">
+        <input type="text" id="audit-search" placeholder="Pesquisar ação..." class="search-input">
+        <select id="audit-table-filter" class="filter-select">
+          <option value="">Todas Tabelas</option>
+          <option value="products">Produtos</option>
+          <option value="stock">Stock</option>
+          <option value="sales">Vendas</option>
+          <option value="movements">Movimentos</option>
+          <option value="cash_register">Caixa</option>
+          <option value="fuel">Combustível</option>
+        </select>
+      </div>
+      <div class="table-container">
+        <table id="audit-table">
+          <thead>
+            <tr><th>ID</th><th>Utilizador</th><th>Ação</th><th>Tabela</th><th>Data</th><th>Ver</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="audit-pagination" class="pagination"></div>
+    </section>
+
+    <section id="page-users" class="page">
+      <div class="toolbar">
+        <button id="btn-add-user" class="btn-primary">+ Novo Utilizador</button>
+      </div>
+      <div class="table-container">
+        <table id="users-table">
+          <thead>
+            <tr><th>ID</th><th>Nome</th><th>Perfil</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="page-settings" class="page">
+      <div class="card settings-card">
+        <h3>Configuração Supabase</h3>
+        <div class="form-group">
+          <label>URL do Projeto Supabase</label>
+          <input type="text" id="supabase-url" placeholder="https://seuprojeto.supabase.co">
+        </div>
+        <div class="form-group">
+          <label>Anon Key</label>
+          <input type="password" id="supabase-key" placeholder="sua-anon-key">
+        </div>
+        <button id="btn-save-config" class="btn-primary">Guardar Configuração</button>
+        <button id="btn-test-connection" class="btn-secondary">Testar Ligação</button>
+        <div id="config-status"></div>
+      </div>
+      <div class="card settings-card">
+        <h3>Sincronização Offline</h3>
+        <div id="offline-queue-info"></div>
+        <button id="btn-sync-offline" class="btn-primary">Sincronizar Agora</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div id="modal" class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Título</h3>
+      <button id="modal-close" class="modal-close">&times;</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+    <div id="modal-footer" class="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="js/supabase.js"></script>
+<script src="js/core.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/products.js"></script>
+<script src="js/stock.js"></script>
+<script src="js/sales.js"></script>
+<script src="js/movements.js"></script>
+<script src="js/inventory.js"></script>
+<script src="js/fuel.js"></script>
+<script src="js/cashier.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
