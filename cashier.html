@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSA — Caixa / POS</title>
+<link rel="stylesheet" href="css/paginacashier.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div id="cashier-app">
+  <header class="cashier-header">
+    <div class="cashier-brand">
+      <div class="brand-icon">🛒</div>
+      <div class="brand-text">OFFICIAL SHOP<br><small>POS — Caixa</small></div>
+    </div>
+    <div class="cashier-meta">
+      <div id="register-info" class="register-badge">Caixa Fechado</div>
+      <div id="cashier-name">—</div>
+      <div id="connection-status" class="status-online">Online</div>
+      <button id="btn-logout" class="btn-logout">Sair</button>
+    </div>
+  </header>
+
+  <div class="cashier-body">
+    <div class="products-panel">
+      <div class="search-bar">
+        <input type="text" id="pos-search" placeholder="Pesquisar produto..." autofocus>
+        <select id="pos-category"><option value="">Todas</option></select>
+      </div>
+      <div id="pos-products" class="product-grid"></div>
+    </div>
+
+    <div class="cart-panel">
+      <h3>🧾 Carrinho</h3>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-summary">
+        <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">0 MZN</span></div>
+        <div class="summary-row total"><span>TOTAL</span><span id="cart-total">0 MZN</span></div>
+      </div>
+      <div class="cart-actions">
+        <button id="btn-clear-cart" class="btn-danger">Limpar</button>
+        <button id="btn-checkout" class="btn-success">Finalizar Venda</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cashier-footer">
+    <div id="register-balance">Saldo Caixa: 0 MZN</div>
+    <div class="footer-actions">
+      <button id="btn-open-register-cashier" class="btn-primary">Abrir Caixa</button>
+      <button id="btn-close-register-cashier" class="btn-danger">Fechar Caixa</button>
+      <button id="btn-view-sales" class="btn-secondary">Minhas Vendas</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div id="modal" class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Título</h3>
+      <button id="modal-close" class="modal-close">&times;</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+    <div id="modal-footer" class="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="js/supabase.js"></script>
+<script src="js/core.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/cashier.js"></script>
+</body>
+</html>
